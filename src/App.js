@@ -1,25 +1,55 @@
-import logo from './logo.svg';
+import { Component } from 'react';
 import './App.css';
+import { Layout } from './components/Layout';
+import { NavBar } from './components/NavBar';
+import { Productos } from './components/Productos';
+import { Title } from './components/Title';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+	state = {
+		productos: [
+			{ name: 'Tomate', price: 1500, img: '/productos/tomate.jpg' },
+			{ name: 'Arbejas', price: 2500, img: '/productos/arbejas.jpg' },
+			{ name: 'Lechuga', price: 500, img: '/productos/lechuga.jpg' },
+		],
+		carro: [
+		]
+	};
+
+	render() {
+		console.log(this.state)
+		return (
+			<div>
+				<NavBar />
+				<Layout>
+					<Title />
+					<Productos
+						agregarAlCarro={this.agregarAlCarro}
+						productos={this.state.productos}>
+					</Productos>
+				</Layout>
+			</div>
+		);
+	}
+
+	agregarAlCarro = (producto) => {
+		const { carro } = this.state;
+
+		if (carro.find(p => p.name === producto.name)) {
+			const newCarro = carro.map(p => {
+				if (p.name === producto.name) {
+					return { ...p, cantidad: p.cantidad + 1 }
+				}
+
+				return p;
+			});
+			return this.setState({ carro: newCarro });
+		}
+
+		this.setState({
+			carro: [...this.state.carro, { ...producto, cantidad: 1 }]
+		});
+	}
 }
 
 export default App;
